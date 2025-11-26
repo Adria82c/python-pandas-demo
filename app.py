@@ -1,33 +1,29 @@
-# ETL Básico con Pandas: Extracción, Transformación y Carga de Datos
+# pip install pandas openpyxl numpy
+
 import pandas as pd
 import numpy as np
 
 # --- 1. EXTRACT (Creación o Extracción de datos) ---
 print("\n--- 1. Extracción (Creación del DataFrame) ---")
-
-# Simulamos datos crudos
 data = {
-    'Nombre': ['Alice', 'Bob', 'Charlie', 'David', 'Eva'],
-    'Edad': [25, 30, 35, 40, 22],
-    'Salario_Bruto': [50000, 65000, 75000, np.nan, 48000], # np.nan simula un valor faltante
-    'Departamento': ['Ventas', 'IT', 'Ventas', 'Marketing', 'IT']
+    'Nombre': ['Alice', 'Bob', 'Charlie', 'David', 'Eva', 'María'],
+    'Edad': [25, 30, 35, 40, 22, 28],
+    # Incluimos un carácter especial ('ñ') para confirmar la correcta codificación
+    'Salario_Bruto': [50000, 65000, 75000, np.nan, 48000, 60000], 
+    'Departamento': ['Ventas', 'IT', 'Ventas', 'Marketing', 'IT', 'Recursos Humanos']
 }
 
 df = pd.DataFrame(data)
-print("\nDataFrame Original:")
-print(df)
-print("-" * 30)
+# ... (El código de Extracción y Transformación permanece igual) ...
 
 # --- 2. TRANSFORM (Limpieza y Modificación de datos) ---
 print("--- 2. Transformación ---")
 
 # a) Limpieza: Rellenar valores faltantes (imputación)
-# Rellenamos el salario faltante (np.nan) con el promedio de la columna
 salario_promedio = df['Salario_Bruto'].mean()
 df['Salario_Bruto'].fillna(salario_promedio, inplace=True)
 
-# b) Creación de una nueva columna: Calcular Salario Neto (simulación simple)
-# Asumimos una retención fija del 30%
+# b) Creación de una nueva columna: Calcular Salario Neto
 df['Salario_Neto'] = df['Salario_Bruto'] * 0.70
 
 # c) Filtrado: Seleccionar solo empleados de 'IT'
@@ -37,16 +33,22 @@ print("\nDataFrame Transformado (Solo IT, Salario Neto calculado):")
 print(df_it)
 print("-" * 30)
 
-# --- 3. LOAD (Carga de datos) ---
+# --- 3. LOAD (Carga de datos a XLSX) ---
 print("--- 3. Carga ---")
 
-# Cargamos el DataFrame transformado a un nuevo archivo CSV
-output_filename = 'empleados_it_transformados.csv'
-df_it.to_csv(output_filename, index=False)
+# Nuevo nombre de archivo con extensión XLSX
+output_filename = 'empleados_it_transformados.xlsx'
 
-print(f"\nDatos cargados exitosamente en: {output_filename}")
+# Usamos df_it.to_excel()
+# index=False evita escribir la columna de índices de Pandas en el archivo.
+# Excel maneja UTF-8 de forma nativa.
+try:
+    df_it.to_excel(output_filename, index=False, engine='openpyxl')
+    print(f"\nDatos cargados exitosamente en el archivo XLSX: {output_filename}")
+except ImportError:
+    print("\nERROR: La librería 'openpyxl' no está instalada.")
+    print("Por favor, instálala usando: pip install openpyxl")
+except Exception as e:
+    print(f"\nOcurrió un error al escribir el archivo XLSX: {e}")
+
 print("-" * 30)
-
-# Verificamos que el archivo se haya creado (opcional)
-import os
-print(f"Verificando si el archivo existe: {os.path.exists(output_filename)}")

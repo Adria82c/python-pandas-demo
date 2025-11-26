@@ -122,8 +122,51 @@ La carpeta `.venv` es pesada (100-200 MB por librerías como Pandas).
 
 > **💾 Tip:** El `requirements.txt` es pequeño (pocos KB) pero contiene toda la información para recrear el entorno completo.
 
+## 4. Empaquetado y Distribución (PyInstaller)
+
+PyInstaller convierte tu script de Python y todas sus dependencias (incluyendo el intérprete de Python) en un ejecutable autónomo (.exe).
+
+### 4.1. Concepto de Aplicación Autónoma
+
+**Resultado**
+   **Detalle:** Un archivo .exe para Windows
+   **Característica:** Ejecutable independiente y autónomo
+
+**Requisito en Destino**
+   **Detalle:** NO necesita que el usuario final tenga Python, pip, o las librerías (Pandas, NumPy, etc.) instaladas
+   **Característica:** Completamente portable
+
+**Proceso**
+   **Detalle:** PyInstaller empaqueta una versión mínima del intérprete de Python, tu código y todas las dependencias en un solo paquete binario
+   **Característica:** Empaquetado automático e inteligente
+
+### 4.2. Opciones de Empaquetado
+
+**Modo Múltiples Archivos (Por defecto)**
+   **Comando:** `pyinstaller tu_app.py`
+   **Resultado:** Crea una carpeta (`dist/tu_app`) con el ejecutable (`tu_app.exe`) y todas las DLLs, librerías y recursos auxiliares necesarios
+   **Distribución:** La carpeta completa debe distribuirse
+
+**Modo OneFile (Recomendado para distribución simple)**
+   **Comando:** `pyinstaller --onefile tu_app.py`
+   **Resultado:** Crea un solo archivo `tu_app.exe`. Al ejecutarse, este .exe se descomprime temporalmente en la memoria o en una carpeta oculta de archivos temporales de Windows
+   **Distribución:** Solo se distribuye el .exe
+
+### 4.3. Reempaquetado con Configuración
+
+**Reempaquetar (Método Recomendado)**
+   **Paso 1:** Borrar carpetas previas
+   **Comando:** `rm -rf build dist`
+   **Propósito:** Limpia compilaciones anteriores para evitar conflictos
+
+   **Paso 2:** Reempaquetar con configuración
+   **Comando:** `pyinstaller tu_app.spec`
+   **Resultado:** Utiliza el archivo de configuración `.spec` generado en la primera ejecución
+   **Ventaja:** Mantiene configuraciones personalizadas y optimizaciones específicas
+
+
 ---
 
 ## 💡 Recordatorio Rápido
 
-**Git Ignora**, **venv Aísla**, **requirements.txt Replica**, y **pip Instala**.
+**Git Ignora**, **venv Aísla**, **requirements.txt Replica**, **pip Instala**, y **pyinstaller Empaqueta**.
